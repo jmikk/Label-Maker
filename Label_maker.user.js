@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         NationStates CTE Flagging Script with Clickable Icon and CTE (with exclusions)
+// @name         NationStates CTE Flagging Script with Clickable Icon and CTE
 // @namespace    http://tampermonkey.net/
 // @version      2.6
-// @description  Flags nations as CTE if they are no longer in the NationStates nations list. Adds clickable icon and CTE flag linking to Boneyard. Skips improperly set up elements like .nref and cardnameblock. No space between the icon and CTE, and uses user-agent and timestamp in the link URL.
+// @description  Flags nations as CTE if they are no longer in the NationStates nations list. Adds clickable icon and CTE flag linking to Boneyard. No space between the icon and CTE, and uses user-agent and timestamp in the link URL. Skips elements with blank nname or nnameblock.
 // @author       Your Name
 // @match        *://www.nationstates.net/*
 // @grant        GM_xmlhttpRequest
@@ -133,12 +133,11 @@
 
         nnameElements.forEach(nnameElement => {
             let originalNationName = nnameElement.textContent.trim(); // Keep original name with correct capitalization and spaces
-            let normalizedNationName = normalizeNationName(originalNationName); // Normalize for comparison
 
-            // Skip elements inside .nref or .cardnameblock (improper setup)
-            if (nnameElement.closest(".nref, .cardnameblock")) {
-                return; // Skip this element
-            }
+            // Skip if the original nation name is empty or blank
+            if (!originalNationName) return;
+
+            let normalizedNationName = normalizeNationName(originalNationName); // Normalize for comparison
 
             // Only flag CTE for .nname if it doesn't exist in valid nations
             if (!validNations.includes(normalizedNationName)) {
@@ -150,16 +149,15 @@
         const nnameblockElements = document.querySelectorAll(".nnameblock");
 
         nnameblockElements.forEach(nnameblockElement => {
+            let originalNationName = nnameblockElement.textContent.trim(); // Keep original name with correct capitalization and spaces
+
+            // Skip if the original nation name is empty or blank
+            if (!originalNationName) return;
+
             const parent = nnameblockElement.closest("p, .deckcard-container, .deckcard-name, a");
 
-            // Skip elements inside .nref or .cardnameblock (improper setup)
-            if (nnameblockElement.closest(".nref, .cardnameblock")) {
-                return; // Skip this element
-            }
-            
             // Only process .nnameblock if there's no .nname in the parent container
             if (parent && !parent.querySelector(".nname")) {
-                let originalNationName = nnameblockElement.textContent.trim(); // Keep original name with correct capitalization and spaces
                 let normalizedNationName = normalizeNationName(originalNationName); // Normalize for comparison
 
                 // Flag CTE for .nnameblock if it doesn't exist in valid nations
