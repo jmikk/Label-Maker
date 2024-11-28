@@ -5,6 +5,7 @@
 // @description  Flags nations as CTE if they are no longer in the NationStates nations list. Adds clickable icon and CTE flag linking to Boneyard. No space between the icon and CTE, and uses user-agent and timestamp in the link URL. Skips elements with blank nname or nnameblock.
 // @author       Your Name
 // @match        *://www.nationstates.net/*
+// @match        *://fast.nationstates.net/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
